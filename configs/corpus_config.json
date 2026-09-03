@@ -1,0 +1,16 @@
+{
+  "seed": 42,
+  "company_name": "Northstar Services Group",
+  "regions": ["Ireland", "United Kingdom", "Germany", "Spain", "Netherlands"],
+  "products": ["NSG Connect", "NSG Protect", "NSG Home", "NSG Plus"],
+  "document_counts": {
+    "policy": 12,
+    "product_guide": 16,
+    "support_procedure": 16,
+    "faq": 12,
+    "operational_playbook": 8,
+    "compliance_guidance": 8
+  },
+  "support_case_count": 300,
+  "evaluation_question_count": 72
+}
