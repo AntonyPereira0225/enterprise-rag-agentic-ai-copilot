@@ -1,0 +1,15 @@
+{
+  "request_log_path": "artifacts/observability/requests.jsonl",
+  "metrics_snapshot_path": "artifacts/observability/service_metrics.json",
+  "experiment_root": "artifacts/experiments",
+  "experiment_name": "enterprise-copilot",
+  "tracking_backend": "local_json",
+  "metric_sources": {
+    "hybrid_retrieval": "data/evaluation/hybrid_retrieval_metrics.json",
+    "grounded_answers": "data/evaluation/grounded_answer_metrics.json",
+    "agent_workflow": "data/evaluation/agent_workflow_metrics.json",
+    "api_validation": "data/evaluation/api_validation_metrics.json",
+    "model_integration": "data/evaluation/model_integration_metrics.json"
+  },
+  "validation_results_path": "data/evaluation/mlops_validation_metrics.json"
+}

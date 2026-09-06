@@ -1,0 +1,8 @@
+{
+  "source_path": "data/raw/knowledge_base.jsonl",
+  "chunks_path": "data/processed/knowledge_chunks.jsonl",
+  "manifest_path": "data/processed/ingestion_manifest.json",
+  "chunk_size_words": 60,
+  "chunk_overlap_words": 10,
+  "included_statuses": ["active"]
+}

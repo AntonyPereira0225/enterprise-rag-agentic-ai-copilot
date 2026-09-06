@@ -1,0 +1,8 @@
+{
+  "grounded_answer_config_path": "configs/grounded_answer_config.json",
+  "support_cases_path": "data/raw/support_cases.jsonl",
+  "safety_evaluation_path": "data/evaluation/agent_guardrail_questions.jsonl",
+  "hard_evaluation_path": "data/evaluation/rag_eval_hard_questions.jsonl",
+  "results_path": "data/evaluation/agent_workflow_metrics.json",
+  "max_input_characters": 500
+}

@@ -1,414 +1,184 @@
 # Solution Architecture
 
-## Project
-Enterprise RAG & Agentic AI Copilot
+## Purpose
 
-## Architecture Goal
+The Enterprise RAG & Agentic AI Copilot demonstrates the complete engineering path around a trustworthy knowledge assistant: reproducible data, ingestion, retrieval, grounded responses, controlled workflows, guardrails, evaluation, serving, observability, and delivery.
 
-The platform is designed as a modular, enterprise-style Retrieval-Augmented Generation (RAG) and Agentic AI system. The objective is to demonstrate not only LLM prompting, but the full engineering lifecycle around ingestion, retrieval, orchestration, evaluation, observability, API serving, responsible AI and deployment.
+Version 1.0 is local-first and open-source-first. Its default runtime uses deterministic Python components and no paid inference. Optional adapters add dense embeddings, FAISS, FastAPI, MLflow, or an Ollama-compatible model behind stable interfaces.
 
-The baseline implementation is intentionally local-first and open-source-first so the project can be developed without relying on paid cloud inference or managed vector-database services. Cloud components can be introduced later without redesigning the full application.
-
-## High-Level Architecture
+## Implemented system
 
 ```mermaid
 flowchart TD
-    A[Knowledge Sources\nPolicies | Product Docs | FAQs | Support Cases] --> B[Ingestion Pipeline]
-    B --> C[Cleaning & Normalisation]
-    C --> D[Chunking & Metadata Enrichment]
-    D --> E[Embedding Model]
-    E --> F[Vector Index]
-    D --> G[Keyword / BM25 Index]
-    F --> H[Hybrid Retrieval]
-    G --> H
-    H --> I[Reranker]
-    I --> J[Context Builder]
-    J --> K[LLM Generation]
-    K --> L[Grounded Answer + Citations]
+    A[Synthetic knowledge documents] --> B[Validated JSONL loader]
+    B --> C[Cleaning + overlapping chunking]
+    C --> D[Lineage manifest + 144 chunks]
+    D --> E[TF-IDF vector index]
+    D --> F[BM25 keyword index]
+    E --> G[Reciprocal-rank fusion]
+    F --> G
+    G --> H[Transparent reranker + diversity]
+    H --> I[Answerability gate + context budget]
+    I --> J[Deterministic evidence selection]
+    I -. optional .-> K[Ollama evidence-ID selection]
+    K --> L[Strict ID validation]
+    L --> M[Exact local quote rendering]
+    J --> M
+    K -. failure .-> J
+    M --> N[Citation verification]
 
-    M[User Query] --> N[Intent Classification]
-    N --> O[LangGraph Agent Router]
-    O --> P[Policy Agent]
-    O --> Q[Product Agent]
-    O --> R[Support Agent]
-    O --> S[Analytics Agent]
-
-    P --> H
-    Q --> H
-    R --> H
-    S --> H
-
-    L --> T[Guardrails & Confidence Checks]
-    T --> U[FastAPI Service]
-    U --> V[Streamlit Demo UI]
-
-    H --> W[Evaluation Framework]
-    K --> W
-    W --> X[MLflow Tracking]
-
-    U --> Y[Observability\nLatency | Errors | Retrieval | Generation]
+    Q[User request] --> R[Input guardrail]
+    R --> S[Explicit intent router]
+    S --> T[Knowledge specialists]
+    S --> U[Read-only analytics specialist]
+    T --> G
+    U --> V[Verified aggregate]
+    N --> W[Output guardrail]
+    V --> W
+    W --> X[Shared service contract]
+    X --> Y[Standard-library HTTP]
+    X -. optional .-> Z[FastAPI / Uvicorn]
+    Y --> UI[Responsive browser UI]
+    Z --> UI
+    X --> O[Structured logs + durable metrics]
+    G --> P[Evaluation + experiment evidence]
+    N --> P
 ```
 
-## Core Architectural Layers
+## Architectural principles
 
-### 1. Knowledge and Data Sources
+### Deterministic baseline
 
-The initial knowledge estate will contain synthetic and public-safe documents representing:
+The default path must reproduce without a model server, GPU, cloud account, or network connection. Fixed seeds, checked-in configuration, stable ordering, and SHA-256 manifests make data and quality changes visible.
 
-- company policies
-- operational procedures
-- product and service documentation
-- FAQs
-- customer-support playbooks
-- historical support cases
-- structured reference data
+### Evidence before generation
 
-No confidential enterprise information will be used.
+Retrieval and answerability decisions happen before any response is constructed. Answer text comes from exact source sentences, every inline citation resolves to a retrieved evidence object, and a verifier checks identifier order, uniqueness, metadata, source membership, and quote presence.
 
-### 2. Ingestion Layer
+### Bounded agents
 
-The ingestion layer converts source documents into a consistent internal representation.
-
-Responsibilities:
-
-- document loading
-- text extraction
-- metadata capture
-- cleaning and normalisation
-- duplicate detection
-- chunk generation
-- chunk identifiers
-- source lineage preservation
-
-Planned Python components:
-
-- `src/ingestion/loaders.py`
-- `src/ingestion/cleaning.py`
-- `src/ingestion/chunking.py`
-- `src/ingestion/metadata.py`
-
-### 3. Embedding Layer
-
-Document chunks are converted into dense numerical representations using a local embedding model from the Hugging Face / Sentence Transformers ecosystem.
-
-Initial direction:
-
-- Sentence Transformers embedding model
-- deterministic batch embedding pipeline
-- configurable model name
-- embedding metadata persisted alongside document identifiers
-
-The embedding interface will be abstracted so that an Azure OpenAI, OpenAI, Vertex AI or other embedding provider could be substituted later.
-
-### 4. Retrieval Layer
-
-The retrieval subsystem will progress through three stages:
-
-1. semantic vector retrieval
-2. keyword/BM25 retrieval
-3. hybrid retrieval with reranking
-
-Initial local vector-store options:
-
-- FAISS
-- Chroma
-
-The retrieval layer will return both content and metadata so generated answers can include verifiable citations.
-
-Planned components:
-
-- `src/retrieval/vector_store.py`
-- `src/retrieval/semantic.py`
-- `src/retrieval/keyword.py`
-- `src/retrieval/hybrid.py`
-- `src/retrieval/reranker.py`
-
-### 5. RAG Generation Layer
-
-The RAG pipeline will combine the user question with retrieved evidence and instruct the model to answer only from the supplied context.
-
-Responsibilities:
-
-- prompt construction
-- context-window management
-- source attribution
-- structured output generation
-- low-confidence fallback
-- unsupported-answer handling
-
-The baseline model will be an appropriately sized local open-source model, potentially served through Ollama or Hugging Face tooling.
-
-### 6. Agentic Orchestration Layer
-
-LangGraph will be used to model explicit stateful workflows rather than relying on an unrestricted autonomous agent.
-
-Initial specialist agents:
-
-| Agent | Responsibility |
-|---|---|
-| Policy Agent | Retrieve and explain policies and procedures. |
-| Product Agent | Answer product/service knowledge questions. |
-| Support Agent | Recommend approved support actions and escalation steps. |
-| Analytics Agent | Summarise structured support or operational information. |
-
-The router will classify the user request and send it to the appropriate workflow. Unsupported or ambiguous requests will follow a controlled fallback path.
-
-Planned components:
-
-- `src/agents/state.py`
-- `src/agents/router.py`
-- `src/agents/policy_agent.py`
-- `src/agents/product_agent.py`
-- `src/agents/support_agent.py`
-- `src/agents/analytics_agent.py`
-- `src/agents/graph.py`
-
-### 7. Responsible AI and Guardrails
-
-Guardrails will be built as explicit application logic rather than treated as a single prompt.
-
-Controls will include:
-
-- prompt-injection checks
-- system-instruction protection
-- unsupported-answer rejection
-- citation coverage checks
-- confidence thresholds
-- sensitive-content checks
-- structured-output validation
-- safe fallback responses
-
-A dedicated adversarial test set will be maintained for reproducible safety evaluation.
-
-### 8. Evaluation Layer
-
-The system will include an evaluation pipeline from the beginning.
-
-Retrieval metrics may include:
-
-- Recall@K
-- Precision@K
-- Mean Reciprocal Rank
-- NDCG
-
-RAG / answer-quality metrics may include:
-
-- faithfulness
-- answer relevance
-- context precision
-- context recall
-- citation coverage
-- groundedness
-
-Evaluation tooling may use RAGAS, DeepEval and custom deterministic checks where appropriate.
-
-Results will be logged to MLflow to compare changes in chunk size, embedding model, retrieval strategy, reranking and prompt versions.
-
-### 9. API Layer
-
-FastAPI will expose production-style endpoints.
-
-Planned endpoints:
-
-- `POST /ask`
-- `POST /retrieve`
-- `POST /agent`
-- `GET /health`
-- `GET /metrics`
-
-Pydantic models will enforce request and response schemas.
-
-### 10. User Interface
-
-A lightweight Streamlit application will provide a portfolio demonstration interface with:
-
-- natural-language question input
-- generated response
-- source citations
-- retrieved evidence
-- selected agent/workflow
-- latency information
-- confidence / fallback indicators
-
-The UI is a demonstration surface; the FastAPI layer remains the primary application interface.
-
-### 11. Observability
-
-The application will record operational metrics including:
-
-- request count
-- latency by pipeline stage
-- retrieval latency
-- generation latency
-- retrieval scores
-- fallback frequency
-- exception counts
-- model / prompt version
-- evaluation results
-
-Logs will be structured so they can later be connected to a cloud observability platform.
-
-### 12. MLOps and CI/CD
-
-The project will demonstrate software-engineering and MLOps practices through:
-
-- MLflow experiment tracking
-- pytest unit and integration tests
-- linting and formatting checks
-- Docker containerisation
-- GitHub Actions CI
-- environment-variable configuration
-- secret exclusion from source control
-- versioned evaluation datasets
-
-## Proposed Repository Structure
+The agent layer is an explicit state machine rather than an unrestricted autonomous loop:
 
 ```text
-enterprise-rag-agentic-ai-copilot/
-├── README.md
-├── docs/
-│   ├── business_requirements.md
-│   ├── solution_architecture.md
-│   ├── evaluation_strategy.md
-│   └── responsible_ai.md
-├── data/
-│   ├── raw/
-│   ├── processed/
-│   └── evaluation/
-├── notebooks/
-│   ├── 01_data_exploration.ipynb
-│   ├── 02_embedding_experiments.ipynb
-│   └── 03_rag_evaluation.ipynb
-├── src/
-│   ├── ingestion/
-│   ├── embeddings/
-│   ├── retrieval/
-│   ├── rag/
-│   ├── agents/
-│   ├── guardrails/
-│   ├── evaluation/
-│   ├── api/
-│   └── monitoring/
-├── app/
-│   └── streamlit_app.py
-├── tests/
-├── config/
-├── scripts/
-├── .github/
-│   └── workflows/
-├── Dockerfile
-├── docker-compose.yml
-├── pyproject.toml
-├── requirements.txt
-├── .env.example
-└── .gitignore
+input guardrail → intent router → one specialist → output guardrail
 ```
 
-## Initial Technology Stack
+Specialists have narrow document policies or read-only aggregate operations. Conversation memory retains only the previous route and turn count required for follow-up routing. Same-conversation calls are serialized.
 
-| Capability | Initial Technology |
+### Replaceable boundaries
+
+Protocols and configuration isolate the retriever, answer generator, embedding adapter, tracking backend, service logic, and HTTP transport. Optional integrations do not change citation, guardrail, API, or evaluation contracts.
+
+## Data and ingestion layer
+
+The synthetic generator creates:
+
+- 72 active knowledge documents across six document families
+- 300 support cases marked synthetic
+- 72 baseline retrieval questions
+
+The ingestion pipeline validates records, normalizes text, detects duplicate IDs/content, filters status, and produces overlapping 60-word chunks with 10-word overlap. `ingestion_manifest.json` records input/output paths, counts, chunk settings, duplicate results, and SHA-256 hashes of both source and output.
+
+All data is synthetic and contains no real customer or enterprise information.
+
+## Retrieval layer
+
+The primary vector baseline uses dependency-free TF-IDF embeddings and cosine similarity. The keyword path uses a dependency-free BM25 index. Reciprocal-rank fusion combines both candidate lists, after which a configurable reranker scores:
+
+- vector similarity
+- fused rank
+- metadata overlap
+- content overlap
+
+Only one chunk per document is retained by default to improve source diversity. A calibrated score threshold controls answerability and abstention. The included 96-question hard benchmark contains paraphrased single-source, multi-source, and deliberately unanswerable questions.
+
+Sentence Transformers and FAISS adapters are implemented as optional dense-retrieval boundaries and tested with small in-memory substitutes so the main quality gate remains lightweight.
+
+## Context and answer layer
+
+The context builder applies four controls:
+
+1. maximum retrieval count
+2. calibrated minimum query score
+3. minimum individual evidence score
+4. total context word budget
+
+Accepted passages receive stable `C1`, `C2`, and subsequent identifiers. The default extractive generator selects the most relevant scoped evidence and copies the exact requirement sentence. Unsupported questions produce a citation-free refusal.
+
+The optional Ollama adapter receives only the question and already-approved evidence. It must return one strict JSON field containing unique, allow-listed citation IDs. The application—not the model—then creates the answer. Invalid output, timeout, connection failure, HTTP error, or excessive response size triggers the deterministic fallback. A final verification failure is replaced by a fail-closed refusal.
+
+## Agent and guardrail layer
+
+The intent router supports:
+
+| Route | Boundary |
 |---|---|
-| Language | Python |
-| Embeddings | Sentence Transformers / Hugging Face |
-| Local LLM | Ollama-compatible open model or Hugging Face model |
-| Vector search | FAISS or Chroma |
-| Keyword retrieval | BM25 |
-| Reranking | Cross-encoder reranker |
-| Agent orchestration | LangGraph |
-| API | FastAPI |
-| Schemas | Pydantic |
-| UI | Streamlit |
-| Evaluation | RAGAS / DeepEval / custom metrics |
-| Experiment tracking | MLflow |
-| Testing | pytest |
-| Containerisation | Docker |
-| CI/CD | GitHub Actions |
-| Version control | Git / GitHub |
+| Policy | Policy, compliance, and operational-playbook evidence |
+| Product | Product-guide evidence |
+| Support | Support-procedure and FAQ evidence |
+| Cross-functional | Multi-family knowledge evidence |
+| Analytics | Counts and average resolution time over synthetic cases |
+| General | Approved knowledge when no narrower route applies |
 
-## Cloud Extension Path
+Input rules block prompt-instruction override attempts, credential/sensitive-data extraction, and requests to perform customer-account actions. Output rules require verified responses, matching inline citation records, safe citation-free refusals, and supported source types.
 
-Once the local version is complete, the architecture can be extended to demonstrate cloud deployment without changing the core application contracts.
+The analytics route performs read-only, deterministic filtering and aggregates. It never executes an external action.
 
-Possible Azure extension:
+## Service and UI layer
 
-```text
-Local Documents / Blob Storage
-        ↓
-Azure AI Search or managed vector search
-        ↓
-Azure OpenAI / hosted model endpoint
-        ↓
-FastAPI container
-        ↓
-Azure Container Apps / App Service
-        ↓
-Application Insights
-```
+`CopilotService` owns request validation, workflow execution, latency measurement, privacy-preserving logging, metrics, safe exception handling, and the response envelope. Two HTTP adapters reuse it:
 
-This cloud deployment is optional and will only be introduced if it materially improves the portfolio relative to its cost.
+- the standard-library threaded server, which runs with no web framework
+- an optional FastAPI adapter with the same routes and request limits
 
-## Architecture Principles
+Both expose:
 
-1. **Grounding before generation** — enterprise knowledge answers must be supported by retrieved evidence.
-2. **Evaluation before optimisation** — architecture changes must be measured against a reproducible test set.
-3. **Controlled agents over unrestricted autonomy** — workflows should be explicit, observable and testable.
-4. **Local-first development** — paid infrastructure should not be required for core functionality.
-5. **Modular interfaces** — models, vector stores and cloud providers should be replaceable.
-6. **Traceability by design** — every answer should retain source and pipeline metadata.
-7. **Responsible AI by design** — safety and unsupported-answer handling are core system requirements.
-8. **Production-minded engineering** — tests, APIs, containerisation, CI/CD and monitoring are part of the project, not optional polish.
+| Route | Purpose |
+|---|---|
+| `GET /` | Browser demonstration |
+| `POST /ask` | Validated copilot request |
+| `GET /health` | Readiness, version, and active knowledge backend |
+| `GET /metrics` | Restart-aware service metric snapshot |
 
-## Delivery Sequence
+Transport boundaries enforce JSON content type, a 32 KiB body limit, malformed-input handling, and security headers. The browser UI renders text with safe DOM APIs and shows status, route, confidence, turn, latency, citations, workflow trace, generator, model, and fallback state.
 
-### Phase 1 — Foundation
-- business requirements
-- architecture
-- repository structure
-- environment setup
+## Observability and evaluation
 
-### Phase 2 — Knowledge Ingestion
-- synthetic/public-safe document corpus
-- cleaning
-- chunking
-- metadata
+Structured request events include timestamps, request ID, keyed question/conversation pseudonyms, route, status, latency, and safe error type. Raw prompts are not written to the request log. The HMAC key is process-local by default, limiting cross-restart correlation.
 
-### Phase 3 — Retrieval Baseline
-- embeddings
-- vector index
-- semantic search
-- baseline retrieval evaluation
+Service metrics persist total requests, status/route/guardrail/error counts, latency totals and averages, and observability persistence errors. Existing valid snapshots are loaded on restart.
 
-### Phase 4 — Advanced RAG
-- keyword retrieval
-- hybrid retrieval
-- reranking
-- grounded generation
-- citations
+Evaluation artifacts cover:
 
-### Phase 5 — Agentic Workflows
-- intent routing
-- specialist agents
-- LangGraph state
-- controlled tool/workflow execution
+- baseline and hard retrieval
+- hybrid tuning and retrieval
+- grounded response and citation verification
+- routing, knowledge regression, and adversarial guardrails
+- real temporary HTTP-server validation
+- optional model contract and fallback validation
+- observability, experiment, container, and CI contracts
+- final requirement-based project acceptance
 
-### Phase 6 — Evaluation & Responsible AI
-- labelled evaluation set
-- RAG metrics
-- prompt-injection tests
-- fallback and confidence logic
-- MLflow experiment tracking
+Experiment tracking writes atomic local JSON by default and can use MLflow when explicitly configured and installed. Records contain parameters, selected metrics, tags, provenance hashes, and copied evaluation artifacts.
 
-### Phase 7 — Production Interface
-- FastAPI
-- Pydantic schemas
-- Streamlit UI
-- structured logging
+## Delivery architecture
 
-### Phase 8 — MLOps
-- pytest
-- Docker
-- GitHub Actions
-- reproducible environments
+The Docker image builds deterministic data/indexes, runs as a non-root user, exposes only the service port, and defines a health check. Compose adds a read-only root filesystem, a writable observability volume, localhost-only publication, a temporary filesystem, restart policy, and no-new-privileges.
 
-### Phase 9 — Optional Cloud Deployment
-- deploy selected components only if cost and portfolio value justify it
+GitHub Actions performs the actual Linux container build and health check after quality succeeds. The quality job regenerates inputs, checks Ruff lint/format, reproduces evaluations, runs pytest with a 90% coverage threshold, validates final acceptance, and uploads evidence.
+
+## Trust boundaries and limitations
+
+| Boundary | Version 1.0 control | Remaining production responsibility |
+|---|---|---|
+| User → service | Schema, character/body limits, content type, guardrails, security headers | Authentication, authorization, rate limits, WAF, TLS termination |
+| Service → model | Local HTTP restriction, remote HTTPS requirement, timeout, response-size and strict JSON/ID validation | Endpoint identity, provider terms, outbound allow-list, secret rotation |
+| Application → logs | HMAC pseudonyms and no raw request text | Centralized access control, retention, redaction review, SIEM integration |
+| Container → host | Non-root, read-only root, bounded writable volume, health check | Image scanning, runtime policy, patching, resource quotas |
+| Conversation state | Per-process locks and minimal memory | Shared state/expiry before multi-replica scaling |
+
+The release is designed for a local portfolio demonstration using synthetic data. Real enterprise deployment requires the additional organizational controls listed in `cloud_deployment_runbook.md`.
+
+## Completion and future extensions
+
+Version 1.0 satisfies the local scope in `business_requirements.md`. Future additions—real identity, managed state, enterprise content connectors, hosted inference, or a cloud deployment—are integrations beyond the completed portfolio baseline, not missing phases. They should preserve the existing evidence, refusal, API, safety, and evaluation contracts.

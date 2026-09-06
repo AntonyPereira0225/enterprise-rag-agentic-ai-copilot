@@ -1,0 +1,103 @@
+{
+  "checks": [
+    {
+      "case_id": "API-001",
+      "name": "health endpoint",
+      "passed": true,
+      "security_headers_present": true,
+      "status_code": 200
+    },
+    {
+      "case_id": "API-002",
+      "name": "demo page",
+      "passed": true,
+      "security_headers_present": true,
+      "status_code": 200
+    },
+    {
+      "case_id": "API-003",
+      "name": "grounded support answer",
+      "passed": true,
+      "status_code": 200
+    },
+    {
+      "case_id": "API-004",
+      "name": "analytics answer",
+      "passed": true,
+      "status_code": 200
+    },
+    {
+      "case_id": "API-005",
+      "name": "blocked prompt injection",
+      "passed": true,
+      "status_code": 200
+    },
+    {
+      "case_id": "API-006",
+      "name": "schema validation",
+      "passed": true,
+      "status_code": 422
+    },
+    {
+      "case_id": "API-007",
+      "name": "malformed JSON",
+      "passed": true,
+      "status_code": 400
+    },
+    {
+      "case_id": "API-008",
+      "name": "content type enforcement",
+      "passed": true,
+      "status_code": 415
+    },
+    {
+      "case_id": "API-009",
+      "name": "request size enforcement",
+      "passed": true,
+      "status_code": 413
+    },
+    {
+      "case_id": "API-010",
+      "name": "request metrics",
+      "passed": true,
+      "status_code": 200
+    },
+    {
+      "case_id": "API-011",
+      "logged_events": 7,
+      "name": "structured log privacy",
+      "passed": true
+    }
+  ],
+  "service_metrics": {
+    "average_latency_ms": 0.618,
+    "errors_total": 0,
+    "guardrail_counts": {
+      "prompt_injection": 1
+    },
+    "latency_ms_total": 4.325,
+    "observability_persistence_errors_total": 0,
+    "requests_total": 7,
+    "route_counts": {
+      "analytics": 1,
+      "blocked": 1,
+      "support": 1,
+      "unrouted": 4
+    },
+    "status_counts": {
+      "blocked": 1,
+      "completed": 2,
+      "invalid_json": 1,
+      "request_too_large": 1,
+      "unsupported_media_type": 1,
+      "validation_error": 1
+    }
+  },
+  "summary": {
+    "checks": 11,
+    "pass_rate": 1.0,
+    "passed": 11,
+    "raw_questions_logged": false,
+    "structured_log_events": 7
+  }
+}

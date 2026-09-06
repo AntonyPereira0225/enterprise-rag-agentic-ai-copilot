@@ -1,0 +1,47 @@
+{
+  "checks": [
+    {
+      "check_id": "MODEL-001",
+      "citation_verification": true,
+      "name": "validated Ollama evidence selection",
+      "passed": true,
+      "requests": 1
+    },
+    {
+      "check_id": "MODEL-002",
+      "fallback_reason": "invalid_provider_response",
+      "name": "safe deterministic fallback for invalid model output",
+      "passed": true,
+      "requests": 1
+    },
+    {
+      "check_id": "MODEL-003",
+      "name": "answerability gate avoids unnecessary model calls",
+      "passed": true,
+      "requests": 0
+    },
+    {
+      "check_id": "MODEL-004",
+      "name": "provider endpoint and model settings validated",
+      "passed": true,
+      "remote_plain_http_rejected": true
+    },
+    {
+      "answerability_accuracy": 1.0,
+      "check_id": "MODEL-005",
+      "citation_verification": 1.0,
+      "evaluated_questions": 96,
+      "evidence_coverage": 1.0,
+      "name": "offline grounded-answer regression remains deterministic",
+      "passed": true
+    }
+  ],
+  "summary": {
+    "checks": 5,
+    "default_backend": "extractive",
+    "fallback_backend": "extractive",
+    "live_ollama_required": false,
+    "pass_rate": 1.0,
+    "passed": 5
+  }
+}

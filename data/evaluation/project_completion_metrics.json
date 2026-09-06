@@ -1,0 +1,237 @@
+{
+  "checks": [
+    {
+      "baseline_questions": 72,
+      "check_id": "DATA-001",
+      "knowledge_documents": 72,
+      "name": "synthetic corpus and baseline evaluation counts",
+      "passed": true,
+      "requirements": [
+        "FR-01",
+        "FR-16",
+        "NFR-01"
+      ],
+      "support_cases": 300
+    },
+    {
+      "all_cases_synthetic": true,
+      "all_documents_active": true,
+      "check_id": "DATA-002",
+      "document_types": {
+        "compliance_guidance": 8,
+        "faq": 12,
+        "operational_playbook": 8,
+        "policy": 12,
+        "product_guide": 16,
+        "support_procedure": 16
+      },
+      "name": "document-family distribution and synthetic-data boundary",
+      "passed": true,
+      "requirements": [
+        "FR-01",
+        "NFR-04",
+        "NFR-07"
+      ]
+    },
+    {
+      "check_id": "DATA-003",
+      "guardrail_cases": 20,
+      "hard_questions": 96,
+      "name": "hard-answerability and guardrail evaluation sets",
+      "passed": true,
+      "requirements": [
+        "FR-11",
+        "FR-16",
+        "NFR-05"
+      ]
+    },
+    {
+      "check_id": "ING-001",
+      "chunks": 144,
+      "chunks_hash_matches": true,
+      "name": "reproducible ingestion manifest and chunk lineage",
+      "passed": true,
+      "requirements": [
+        "FR-02",
+        "NFR-01",
+        "NFR-02"
+      ],
+      "source_hash_matches": true
+    },
+    {
+      "check_id": "RET-001",
+      "indexes": [
+        {
+          "passed": true,
+          "path": "data/vector_store/tfidf_index.json",
+          "records": 144
+        },
+        {
+          "passed": true,
+          "path": "data/vector_store/bm25_index.json",
+          "records": 144
+        }
+      ],
+      "name": "vector and keyword indexes map to every processed chunk",
+      "passed": true,
+      "requirements": [
+        "FR-03",
+        "FR-04",
+        "FR-05",
+        "NFR-02",
+        "NFR-08"
+      ]
+    },
+    {
+      "answerability_accuracy": 1.0,
+      "check_id": "EVAL-001",
+      "evaluated_questions": 96,
+      "evidence_recall_at_5": 1.0,
+      "name": "hybrid retrieval, reranking, and abstention quality",
+      "passed": true,
+      "requirements": [
+        "FR-05",
+        "FR-06",
+        "FR-11",
+        "FR-16"
+      ]
+    },
+    {
+      "check_id": "EVAL-002",
+      "citation_verification": 1.0,
+      "evidence_coverage": 1.0,
+      "name": "grounded answers, citations, and safe refusals",
+      "passed": true,
+      "refusal_accuracy": 1.0,
+      "requirements": [
+        "FR-07",
+        "FR-08",
+        "FR-11",
+        "NFR-02",
+        "NFR-05"
+      ]
+    },
+    {
+      "adversarial_block_rate": 1.0,
+      "check_id": "EVAL-003",
+      "knowledge_evidence_coverage": 1.0,
+      "knowledge_status_accuracy": 1.0,
+      "name": "agent routing, knowledge regression, and guardrail safety",
+      "passed": true,
+      "requirements": [
+        "FR-09",
+        "FR-10",
+        "FR-11",
+        "NFR-05"
+      ],
+      "safety_pass_rate": 1.0
+    },
+    {
+      "check_id": "API-001",
+      "name": "API, UI, schema, limits, metrics, and log privacy",
+      "passed": true,
+      "requirements": [
+        "FR-12",
+        "FR-13",
+        "FR-14",
+        "NFR-04",
+        "NFR-06"
+      ],
+      "validation_summary": {
+        "checks": 11,
+        "pass_rate": 1.0,
+        "passed": 11,
+        "raw_questions_logged": false,
+        "structured_log_events": 7
+      }
+    },
+    {
+      "check_id": "MODEL-001",
+      "name": "optional model adapter and deterministic fallback",
+      "passed": true,
+      "requirements": [
+        "FR-07",
+        "FR-11",
+        "NFR-05",
+        "NFR-07",
+        "NFR-08"
+      ],
+      "validation_summary": {
+        "checks": 5,
+        "default_backend": "extractive",
+        "fallback_backend": "extractive",
+        "live_ollama_required": false,
+        "pass_rate": 1.0,
+        "passed": 5
+      }
+    },
+    {
+      "check_id": "DEL-001",
+      "name": "observability, experiment, container, and CI contracts",
+      "passed": true,
+      "requirements": [
+        "FR-12",
+        "FR-15",
+        "FR-17",
+        "FR-18",
+        "NFR-01",
+        "NFR-06"
+      ],
+      "validation_summary": {
+        "checks": 8,
+        "container_definition_validation": "static",
+        "docker_available": false,
+        "local_container_build_executed": false,
+        "pass_rate": 1.0,
+        "passed": 8
+      }
+    },
+    {
+      "check_id": "DOC-001",
+      "missing_files": [],
+      "missing_requirement_ids": [],
+      "name": "release documentation and requirement traceability matrix",
+      "passed": true,
+      "requirements": [
+        "NFR-01",
+        "NFR-02",
+        "NFR-08"
+      ]
+    },
+    {
+      "check_id": "REL-001",
+      "module_version": "1.0.0",
+      "name": "consistent 1.0.0 release identity",
+      "package_version": "1.0.0",
+      "passed": true,
+      "requirements": [
+        "NFR-01",
+        "NFR-03"
+      ],
+      "service_version": "1.0.0"
+    },
+    {
+      "check_id": "SEC-001",
+      "local_env_present": false,
+      "name": "no embedded high-confidence secrets or committed local environment file",
+      "passed": true,
+      "requirements": [
+        "NFR-04"
+      ],
+      "secret_matches": []
+    }
+  ],
+  "summary": {
+    "checks": 14,
+    "cloud_status": "runbook_only_no_resources_provisioned",
+    "docker_local_status": "not_available_ci_gate_configured",
+    "functional_requirements_covered": 18,
+    "functional_requirements_total": 18,
+    "live_model_status": "optional_not_required_mock_contract_validated",
+    "nonfunctional_requirements_covered": 8,
+    "nonfunctional_requirements_total": 8,
+    "pass_rate": 1.0,
+    "passed": 14,
+    "release_version": "1.0.0"
+  }
+}

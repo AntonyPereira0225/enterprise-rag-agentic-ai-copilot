@@ -116,29 +116,25 @@ The platform tests malicious or risky prompts including prompt injection, attemp
 - API-based model serving
 - Application monitoring
 
-## Initial Technology Direction
+## Implemented Technology Direction
 
-The baseline implementation will prioritise local or free tooling before optional cloud deployment.
+The completed baseline prioritises local and dependency-light components, with optional adapters where heavier tools add value.
 
-- Python
-- PyTorch
-- Hugging Face Transformers
-- Sentence Transformers / embedding models
-- FAISS or Chroma
-- LangGraph
-- FastAPI
-- Pydantic
-- MLflow
-- RAGAS and/or DeepEval
-- pytest
-- Docker
-- GitHub Actions
-- Streamlit
-- Optional later deployment to Azure, Databricks, Azure ML or another cloud platform
+- Python 3.11/3.12 and standard-library service components
+- dependency-free TF-IDF embeddings/vector search and BM25 keyword search
+- optional Sentence Transformers, PyTorch, and FAISS dense-retrieval adapters
+- explicit in-process agent state machine with visible routing/guardrail steps
+- standard-library HTTP server plus an optional FastAPI/Uvicorn adapter
+- responsive HTML/CSS/JavaScript browser demonstration
+- custom deterministic retrieval, grounding, citation, safety, API, and delivery evaluation
+- atomic local experiment tracking plus an optional MLflow adapter
+- optional Ollama-compatible evidence-selection adapter
+- pytest, Ruff, Docker, Compose, and GitHub Actions
+- provider-neutral cloud deployment runbook; no cloud resources required or provisioned
 
 ## Data Scope
 
-The project will use synthetic enterprise-style knowledge such as:
+The project uses synthetic enterprise-style knowledge such as:
 
 - company policies
 - product and service documentation
@@ -148,11 +144,11 @@ The project will use synthetic enterprise-style knowledge such as:
 - operational playbooks
 - historical synthetic support cases
 
-No real customer PII, company-confidential documents or proprietary internal data will be used.
+No real customer PII, company-confidential documents or proprietary internal data is used.
 
-## Initial Success Measures
+## Success Measures
 
-The exact targets will be established after the evaluation dataset is created. The project will track at least:
+The completed evaluation framework tracks:
 
 - Retrieval Recall@K
 - Retrieval Precision@K
@@ -176,17 +172,15 @@ The exact targets will be established after the evaluation dataset is created. T
 - High-cost cloud GPU training
 - Claims that the system is production-certified or compliant with a specific regulation
 
-## Delivery Phases
+## Delivered Workstreams
 
-1. Business requirements and solution architecture
+1. Business requirements and as-built solution architecture
 2. Synthetic enterprise knowledge-base creation
-3. Document ingestion and preprocessing
-4. Embeddings and baseline vector retrieval
-5. RAG generation with citations
-6. Hybrid retrieval and reranking
-7. Agentic workflow orchestration
-8. Evaluation framework and MLflow tracking
-9. Responsible-AI and adversarial testing
-10. FastAPI service and Streamlit interface
-11. Dockerisation and automated testing
-12. CI/CD, observability and optional cloud deployment
+3. Document ingestion, chunking, lineage, and duplicate validation
+4. TF-IDF vector retrieval plus optional dense adapters
+5. Hard evaluation, BM25 hybrid retrieval, reranking, and abstention tuning
+6. Grounded response construction and citation verification
+7. Controlled agent workflows, conversation state, and guardrails
+8. API service, FastAPI adapter, and browser interface
+9. Observability, experiment tracking, Docker, CI, and adversarial testing
+10. Optional Ollama evidence selection, final acceptance validation, and cloud runbook

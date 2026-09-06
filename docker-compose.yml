@@ -1,0 +1,22 @@
+services:
+  copilot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: enterprise-rag-agentic-ai-copilot:local
+    environment:
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+    ports:
+      - "127.0.0.1:8000:8000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - copilot_artifacts:/app/artifacts
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  copilot_artifacts:

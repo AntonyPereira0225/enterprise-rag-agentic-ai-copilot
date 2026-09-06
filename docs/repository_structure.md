@@ -10,17 +10,20 @@ enterprise-rag-agentic-ai-copilot/
 │   └── enterprise_copilot/
 │       ├── ingestion/           # Loading, cleaning, parsing and chunking
 │       ├── retrieval/           # Embeddings, vector search, BM25 and reranking
-│       ├── llm/                 # Prompting and grounded response generation
-│       ├── agents/              # Intent routing and LangGraph orchestration
+│       ├── llm/                 # Grounded generation, citation checks and optional Ollama
+│       ├── agents/              # Intent routing and explicit stateful orchestration
 │       ├── guardrails/          # Responsible-AI and security controls
-│       ├── evaluation/          # Retrieval/RAG/agent evaluation
-│       ├── api/                 # FastAPI service layer
-│       ├── ui/                  # Demonstration UI
+│       ├── evaluation/          # Retrieval/RAG/agent/API/model/release evaluation
+│       ├── api/                 # Shared service plus standard-library/FastAPI adapters
+│       ├── ui/                  # Responsive browser demonstration
 │       └── common/              # Shared settings, schemas and utilities
 ├── tests/                       # Unit, integration and adversarial tests
 ├── .env.example                 # Safe environment-variable template
 ├── pyproject.toml               # Python package/tool configuration
-├── requirements.txt             # Runtime dependencies
+├── requirements.txt             # Dependency-free core runtime note
+├── requirements-api.txt         # Optional FastAPI/Uvicorn adapter
+├── requirements-dense.txt       # Optional neural embedding/FAISS adapter
+├── requirements-mlops.txt       # Optional MLflow adapter
 └── requirements-dev.txt         # Testing and development dependencies
 ```
 

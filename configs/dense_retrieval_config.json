@@ -1,0 +1,14 @@
+{
+  "chunks_path": "data/processed/knowledge_chunks.jsonl",
+  "evaluation_path": "data/evaluation/rag_eval_hard_questions.jsonl",
+  "index_path": "data/vector_store/minilm_l6_v2.faiss",
+  "results_path": "data/evaluation/dense_retrieval_metrics.json",
+  "embedding": {
+    "type": "sentence_transformer",
+    "model_name": "sentence-transformers/all-MiniLM-L6-v2",
+    "device": "cpu",
+    "batch_size": 32
+  },
+  "top_k_values": [1, 3, 5, 10],
+  "minimum_score": 0.35
+}

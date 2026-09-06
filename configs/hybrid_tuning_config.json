@@ -1,0 +1,40 @@
+{
+  "calibration_stride": 4,
+  "rrf_constants": [10, 60],
+  "vector_weights": [1.0, 2.0, 3.0],
+  "bm25_weight": 1.0,
+  "minimum_scores": [0.20, 0.25, 0.30, 0.35, 0.40, 0.45],
+  "reranker_weight_profiles": [
+    {
+      "vector_similarity": 0.45,
+      "content_overlap": 0.25,
+      "metadata_overlap": 0.20,
+      "fused_rank": 0.10
+    },
+    {
+      "vector_similarity": 0.65,
+      "content_overlap": 0.15,
+      "metadata_overlap": 0.10,
+      "fused_rank": 0.10
+    },
+    {
+      "vector_similarity": 0.70,
+      "content_overlap": 0.10,
+      "metadata_overlap": 0.10,
+      "fused_rank": 0.10
+    },
+    {
+      "vector_similarity": 0.90,
+      "content_overlap": 0.00,
+      "metadata_overlap": 0.00,
+      "fused_rank": 0.10
+    },
+    {
+      "vector_similarity": 1.00,
+      "content_overlap": 0.00,
+      "metadata_overlap": 0.00,
+      "fused_rank": 0.00
+    }
+  ],
+  "output_path": "data/evaluation/hybrid_tuning_results.json"
+}

@@ -214,3 +214,7 @@ data/raw/*.jsonl
 data/evaluation/*.jsonl
 data/processed/
 data/vector_store/
+
+# Local observability and experiment artifacts
+artifacts/
+mlruns/

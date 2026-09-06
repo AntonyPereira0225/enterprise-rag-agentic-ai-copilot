@@ -1,0 +1,3 @@
+# Optional production-style HTTP adapter. The standard-library server needs neither package.
+fastapi>=0.141.1,<0.142
+uvicorn[standard]>=0.30

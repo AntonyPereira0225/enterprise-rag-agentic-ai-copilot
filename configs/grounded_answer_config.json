@@ -1,0 +1,18 @@
+{
+  "retrieval_config_path": "configs/hybrid_retrieval_config.json",
+  "evaluation_path": "data/evaluation/rag_eval_hard_questions.jsonl",
+  "results_path": "data/evaluation/grounded_answer_metrics.json",
+  "top_k": 5,
+  "minimum_query_score": 0.30,
+  "minimum_evidence_score": 0.0,
+  "max_context_words": 300,
+  "max_answer_citations": 3,
+  "generator_backend": "extractive",
+  "fallback_backend": "extractive",
+  "ollama_base_url": "http://localhost:11434",
+  "ollama_model": "llama3.2:3b",
+  "ollama_timeout_seconds": 10.0,
+  "ollama_seed": 7,
+  "ollama_max_response_bytes": 65536,
+  "model_validation_results_path": "data/evaluation/model_integration_metrics.json"
+}

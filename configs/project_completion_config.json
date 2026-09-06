@@ -1,0 +1,38 @@
+{
+  "corpus_config_path": "configs/corpus_config.json",
+  "hard_evaluation_config_path": "configs/hard_evaluation_config.json",
+  "knowledge_documents_path": "data/raw/knowledge_base.jsonl",
+  "support_cases_path": "data/raw/support_cases.jsonl",
+  "baseline_questions_path": "data/evaluation/rag_eval_questions.jsonl",
+  "hard_questions_path": "data/evaluation/rag_eval_hard_questions.jsonl",
+  "guardrail_questions_path": "data/evaluation/agent_guardrail_questions.jsonl",
+  "chunks_path": "data/processed/knowledge_chunks.jsonl",
+  "ingestion_manifest_path": "data/processed/ingestion_manifest.json",
+  "vector_index_paths": [
+    "data/vector_store/tfidf_index.json",
+    "data/vector_store/bm25_index.json"
+  ],
+  "metric_paths": {
+    "hybrid_retrieval": "data/evaluation/hybrid_retrieval_metrics.json",
+    "grounded_answers": "data/evaluation/grounded_answer_metrics.json",
+    "agent_workflow": "data/evaluation/agent_workflow_metrics.json",
+    "api_validation": "data/evaluation/api_validation_metrics.json",
+    "mlops_validation": "data/evaluation/mlops_validation_metrics.json",
+    "model_integration": "data/evaluation/model_integration_metrics.json"
+  },
+  "expected_guardrail_cases": 20,
+  "minimum_quality_rate": 1.0,
+  "required_release_files": [
+    "README.md",
+    "LICENSE",
+    "Dockerfile",
+    "docker-compose.yml",
+    ".github/workflows/ci.yml",
+    "docs/business_requirements.md",
+    "docs/solution_architecture.md",
+    "docs/model_integration.md",
+    "docs/cloud_deployment_runbook.md",
+    "docs/final_release.md"
+  ],
+  "results_path": "data/evaluation/project_completion_metrics.json"
+}

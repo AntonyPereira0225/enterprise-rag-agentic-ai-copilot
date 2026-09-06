@@ -1,0 +1,11 @@
+{
+  "workflow_config_path": "configs/agent_workflow_config.json",
+  "observability_config_path": "configs/observability_config.json",
+  "host": "127.0.0.1",
+  "port": 8000,
+  "max_request_bytes": 32768,
+  "demo_page_path": "src/enterprise_copilot/ui/index.html",
+  "validation_results_path": "data/evaluation/api_validation_metrics.json",
+  "service_name": "enterprise-rag-agentic-ai-copilot",
+  "service_version": "1.0.0"
+}

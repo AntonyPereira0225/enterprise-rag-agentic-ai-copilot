@@ -85,6 +85,8 @@ Each evaluation item contains:
 
 This enables later measurement of retrieval recall, citation coverage, answer relevance and faithfulness.
 
+An additional `data/evaluation/rag_eval_hard_questions.jsonl` benchmark adds paraphrased, multi-source, and unanswerable questions after the basic corpus has been validated. It is kept separate so the simple pipeline check and harder model-comparison benchmark retain distinct purposes.
+
 ## Design Principles
 
 ### Deterministic generation

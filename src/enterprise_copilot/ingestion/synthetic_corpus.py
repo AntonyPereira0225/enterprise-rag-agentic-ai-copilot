@@ -3,10 +3,9 @@ from __future__ import annotations
 import json
 import random
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
-
 
 DOCUMENT_TYPES = (
     "policy",
@@ -48,7 +47,7 @@ class CorpusConfig:
     evaluation_question_count: int
 
     @classmethod
-    def from_json(cls, path: Path) -> "CorpusConfig":
+    def from_json(cls, path: Path) -> CorpusConfig:
         payload = json.loads(path.read_text(encoding="utf-8"))
         return cls(**payload)
 
@@ -78,14 +77,14 @@ def _document_content(
     *,
     company: str,
     document_type: str,
+    department: str,
     region: str,
     product: str,
     title: str,
     fact: str,
     index: int,
 ) -> str:
-    issue = ISSUE_TYPES[index % len(ISSUE_TYPES)].replace("_", " ")
-    department = DEPARTMENTS[index % len(DEPARTMENTS)]
+    issue = ISSUE_TYPES[(index - 1) % len(ISSUE_TYPES)].replace("_", " ")
     return (
         f"{title}. This approved {document_type.replace('_', ' ')} applies to {product} in {region}. "
         f"The owning function is {department}. For the primary {issue} scenario, the documented "
@@ -111,8 +110,7 @@ def generate_knowledge_documents(config: CorpusConfig) -> list[dict[str, Any]]:
             fact, _ = _stable_fact(global_index, document_type)
             document_id = f"NSG-{document_type[:3].upper()}-{global_index:04d}"
             title = (
-                f"{product} {document_type.replace('_', ' ').title()} "
-                f"{local_index:02d} - {region}"
+                f"{product} {document_type.replace('_', ' ').title()} {local_index:02d} - {region}"
             )
             effective = date(2026, 1, 1) + timedelta(days=(global_index * 7) % 220)
             tags = sorted(
@@ -141,6 +139,7 @@ def generate_knowledge_documents(config: CorpusConfig) -> list[dict[str, Any]]:
                     "content": _document_content(
                         company=config.company_name,
                         document_type=document_type,
+                        department=department,
                         region=region,
                         product=product,
                         title=title,
@@ -160,7 +159,7 @@ def generate_support_cases(
 ) -> list[dict[str, Any]]:
     rng = random.Random(config.seed + 1)
     cases: list[dict[str, Any]] = []
-    base_time = datetime(2026, 1, 1, 9, 0, 0)
+    base_time = datetime(2026, 1, 1, 9, 0, 0, tzinfo=UTC)
 
     for index in range(1, config.support_case_count + 1):
         document = documents[(index - 1) % len(documents)]
@@ -203,8 +202,10 @@ def generate_evaluation_questions(
 
     for index, document in enumerate(ordered[:target], start=1):
         _, question_stem = _stable_fact(index, document["document_type"])
+        document_family = document["document_type"].replace("_", " ")
         question = (
-            f"For {document['product']} in {document['region']}, {question_stem.lower()}"
+            f"According to the {document_family} for {document['product']} in "
+            f"{document['region']}, {question_stem.lower()}"
         )
         questions.append(
             {

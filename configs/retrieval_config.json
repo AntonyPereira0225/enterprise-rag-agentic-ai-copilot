@@ -1,0 +1,13 @@
+{
+  "chunks_path": "data/processed/knowledge_chunks.jsonl",
+  "evaluation_path": "data/evaluation/rag_eval_questions.jsonl",
+  "index_path": "data/vector_store/tfidf_index.json",
+  "results_path": "data/evaluation/retrieval_metrics.json",
+  "embedding": {
+    "type": "tfidf",
+    "ngram_min": 1,
+    "ngram_max": 2,
+    "min_document_frequency": 1
+  },
+  "top_k_values": [1, 3, 5]
+}

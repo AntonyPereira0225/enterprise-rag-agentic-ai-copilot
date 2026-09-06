@@ -1,0 +1,7 @@
+{
+  "source_path": "data/raw/knowledge_base.jsonl",
+  "output_path": "data/evaluation/rag_eval_hard_questions.jsonl",
+  "paraphrased_count": 72,
+  "multi_source_count": 12,
+  "unanswerable_count": 12
+}

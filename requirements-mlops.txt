@@ -1,0 +1,3 @@
+# Optional external experiment-tracking adapter. Local JSON tracking needs no package.
+mlflow>=2.16
+PyYAML>=6.0.3

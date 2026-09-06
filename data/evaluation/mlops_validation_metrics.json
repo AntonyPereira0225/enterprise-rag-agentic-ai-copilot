@@ -1,0 +1,63 @@
+{
+  "checks": [
+    {
+      "check_id": "OBS-001",
+      "events": 1,
+      "name": "durable privacy-preserving JSON request log",
+      "passed": true
+    },
+    {
+      "check_id": "OBS-002",
+      "name": "durable service metrics snapshot",
+      "passed": true,
+      "requests": 1
+    },
+    {
+      "check_id": "EXP-001",
+      "metrics": 10,
+      "name": "evaluation metrics collected for experiment tracking",
+      "passed": true,
+      "source_artifacts": 5
+    },
+    {
+      "check_id": "EXP-002",
+      "name": "atomic local experiment record",
+      "passed": true,
+      "run_id": "7d1060156651f78f"
+    },
+    {
+      "check_id": "DEL-001",
+      "missing": [],
+      "name": "container image contract",
+      "passed": true
+    },
+    {
+      "check_id": "DEL-002",
+      "missing": [],
+      "name": "least-privilege local Compose contract",
+      "passed": true,
+      "yaml_parsed": true
+    },
+    {
+      "check_id": "CI-001",
+      "missing": [],
+      "name": "continuous-integration quality gates",
+      "passed": true,
+      "yaml_parsed": true
+    },
+    {
+      "check_id": "CI-002",
+      "missing": [],
+      "name": "container build and health-check gate",
+      "passed": true
+    }
+  ],
+  "summary": {
+    "checks": 8,
+    "container_definition_validation": "static",
+    "docker_available": false,
+    "local_container_build_executed": false,
+    "pass_rate": 1.0,
+    "passed": 8
+  }
+}

@@ -1,6 +1,10 @@
 from pathlib import Path
 
-from enterprise_copilot.ingestion.synthetic_corpus import CorpusConfig, generate_corpus, write_corpus
+from enterprise_copilot.ingestion.synthetic_corpus import (
+    CorpusConfig,
+    generate_corpus,
+    write_corpus,
+)
 
 
 def main() -> None:
